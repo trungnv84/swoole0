@@ -8,7 +8,7 @@ class RavenDB
     private $database;
     private $pem;
 
-    public function __construct($server, $database, $pem)
+    public function __construct($server, $database, $pem = null)
     {
         $this->server = $server;
         $this->database = $database;
@@ -25,22 +25,22 @@ class RavenDB
     function get($id)
     {
         $url = $this->_url('/docs?id=' . $id);
-        return $this->_exec('GET', $url, 200, NULL)->Results[0];
+        return $this->_exec('GET', $url, 200, null)->Results[0];
     }
 
     function del($id)
     {
         $url = $this->_url('/docs?id=' . $id);
-        $this->_exec('DELETE', $url, 204, NULL);
+        $this->_exec('DELETE', $url, 204, null);
     }
 
-    function query($query, $args = NULL)
+    function query($query, $args = null)
     {
         $r = $this->raw_query($query, $args);
         return $r->Results;
     }
 
-    function raw_query($query, $args = NULL)
+    function raw_query($query, $args = null)
     {
         $url = $this->_url('/queries');
         $body = json_encode(array('Query' => $query, 'QueryParameters' => $args));
@@ -51,14 +51,14 @@ class RavenDB
     {
         $curl = curl_init($url);
         try {
-            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, '2');
-            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, '1');
+            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
+            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 1);
             curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-            if ($this->pem != NULL) {
+            if ($this->pem != null) {
                 curl_setopt($curl, CURLOPT_SSLCERT, $this->pem);
             }
-            if ($body != NULL) {
+            if ($body != null) {
                 curl_setopt($curl, CURLOPT_POSTFIELDS, $body);
             }
             $response = curl_exec($curl);
@@ -67,14 +67,14 @@ class RavenDB
                     case $expectedStatusCode:
                         return json_decode($response);
                     case 404:
-                        return NULL;
+                        return null;
                     default:
                         echo $response;
-                        throw new Exception("$url GOT $http_code - $response");
+                        throw new \Exception("$url GOT $http_code - $response");
                 }
             } else {
                 echo $this->error_codes[$error_code];
-                throw new Exception("$url GOT $error_code - $response");
+                throw new \Exception("$url GOT $error_code - $response");
             }
         } finally {
             curl_close($curl);
