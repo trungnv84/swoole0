@@ -54,8 +54,10 @@ class RavenDB
             curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, '2');
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, '1');
             curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
-            curl_setopt($curl, CURLOPT_SSLCERT, $this->pem);
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            if ($this->pem != NULL) {
+                curl_setopt($curl, CURLOPT_SSLCERT, $this->pem);
+            }
             if ($body != NULL) {
                 curl_setopt($curl, CURLOPT_POSTFIELDS, $body);
             }
