@@ -97,8 +97,6 @@ class Base
         $cli->execute("$url_info[path]?$url_info[query]");
         $response = $cli->body;
         $http_code = $cli->getStatusCode();
-        var_dump($cli);
-        var_dump($http_code);
         switch ($http_code) {
             case $expectedStatusCode:
                 return json_decode($response);
