@@ -33,7 +33,7 @@ class Base
 
     function add($id_prefix, $doc)
     {
-        try {
+        //try {
             $t = 0;
             $nano = new NanoId();
             do {
@@ -44,9 +44,9 @@ class Base
             if ($t < 10) {
                 return $this->put($id, $doc);
             }
-        } catch (\Exception $e) {
+        /*} catch (\Exception $e) {
 
-        }
+        }*/
     }
 
     function put($id, $doc)
@@ -83,7 +83,7 @@ class Base
 
     private function _exec($method, $url, $expectedStatusCode, $body)
     {
-        try {
+        //try {
             $url_info = parse_url($url);
             $host = $url_info['host'];
             $path = $url_info['path'];
@@ -109,9 +109,9 @@ class Base
                     throw new \Exception("$url GOT $http_code - $response - $http_res");
             }
             $cli->close();
-        } finally {
+        /*} catch (\Exception $e) {
 
-        }
+        }*/
     }
 
     private function _url($path)
