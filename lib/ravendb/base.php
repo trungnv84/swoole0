@@ -97,7 +97,7 @@ class Base
         ]);
         $cli->set(['timeout' => 1]);
         if ($body != null) {
-            $cli->setData(http_build_query($body));
+            $cli->setData($body);
         }
         $cli->execute($path);
         //$response = $cli->body;
