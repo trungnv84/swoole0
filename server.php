@@ -11,7 +11,7 @@ $http->on('start', function ($server) {
 $http->on('request', function ($request, $response) {
     $raven = new \RavenDB\Session('http://192.168.0.102:28080', 'omgfin-exchange');
 
-    $raven->add('product/', [
+    $newProduct = $raven->add('product/', [
         'name' => 'Window 10 ' . rand() ,
         'price' => '300' . rand(),
         '@metadata' => [
@@ -20,7 +20,7 @@ $http->on('request', function ($request, $response) {
     ]);
 
     $response->header("Content-Type", "text/plain");
-    $response->end("Hello World\n");
+    $response->end(var_export($newProduct, true) . "\nHello World\n");
 });
 
 $http->start();

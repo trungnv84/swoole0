@@ -97,7 +97,7 @@ class Base
             }
             $cli->execute($path);
             $response = $cli->body;
-            echo $http_code = $cli->getStatusCode();
+            echo $http_code = $cli->getDefer();
             switch ($http_code) {
                 case $expectedStatusCode:
                     return json_decode($response);
