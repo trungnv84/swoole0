@@ -1,6 +1,21 @@
 <?php
+/*
+ * Require: Nanoid-php, symfony/lock
+ *
+ * https://github.com/hidehalo/nanoid-php
+ * Install: composer require hidehalo/nanoid-php
+ *
+ * https://packagist.org/packages/symfony/lock
+ * Install: composer require symfony/lock
+ *
+ * */
 
 namespace RavenDB;
+
+require_once 'lock.php';
+
+use RavenDB\Lock as RavenLock;
+use Hidehalo\Nanoid\Client as NanoId;
 
 class Base
 {
@@ -13,6 +28,24 @@ class Base
         $this->server = $server;
         $this->database = $database;
         $this->pem = $pem;
+    }
+
+    function add($id_prefix, $doc)
+    {
+        try {
+            $t = 0;
+            $nano = new NanoId();
+            do {
+                $t++;
+                $id = $id_prefix . $nano->generateId(21, NanoId::MODE_DYNAMIC);
+                $old = $this->get($id);
+            } while ($old && $t < 10);
+            if ($t < 10) {
+                return $this->put($id, $doc);
+            }
+        } catch (\Exception $e) {
+
+        }
     }
 
     function put($id, $doc)
@@ -47,12 +80,15 @@ class Base
         return $this->_exec('POST', $url, 200, $body);
     }
 
-    private function _exec($method, $url, $expectedStatusCode, $body)
+    private function _exec($method, $url, $expectedStatusCode, $body, Array $curl_options_array = [])
     {
         $curl = curl_init($url);
         try {
             curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            if (count($curl_options_array) > 0) {
+                curl_setopt_array($curl, $curl_options_array);
+            }
             if ($this->pem != null) {
                 curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
                 curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 1);
@@ -73,7 +109,7 @@ class Base
                         throw new \Exception("$url GOT $http_code - $response");
                 }
             } else {
-                echo $this->error_codes[$error_code];
+                echo self::ERROR_CODES[$error_code];
                 throw new \Exception("$url GOT $error_code - $response");
             }
         } finally {
@@ -86,7 +122,7 @@ class Base
         return $this->server . '/databases/' . $this->database . $path;
     }
 
-    private $error_codes = array(
+    const ERROR_CODES = array(
         1 => 'CURLE_UNSUPPORTED_PROTOCOL',
         2 => 'CURLE_FAILED_INIT',
         3 => 'CURLE_URL_MALFORMAT',
