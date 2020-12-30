@@ -60,8 +60,7 @@ class Base
     {
         $url = $this->_url('/docs?id=' . $id);
         $rs = $this->_exec('GET', $url, 200, null);
-        var_dump($rs);
-        if (property_exists($rs, 'Results') && is_array($rs->Results) && count($rs->Results) > 0) {
+        if (is_object($rs) && property_exists($rs, 'Results') && is_array($rs->Results) && count($rs->Results) > 0) {
             return $rs->Results[0];
         }
     }
