@@ -33,20 +33,20 @@ class Base
 
     function add($id_prefix, $doc)
     {
-        //try {
-        $t = 0;
-        $nano = new NanoId();
-        do {
-            $t++;
-            $id = $id_prefix . $nano->generateId(21, NanoId::MODE_DYNAMIC);
-            $old = $this->get($id);
-        } while ($old && $t < 10);
-        if ($t < 10) {
-            return $this->put($id, $doc);
-        }
-        /*} catch (\Exception $e) {
+        try {
+            $t = 0;
+            $nano = new NanoId();
+            do {
+                $t++;
+                $id = $id_prefix . $nano->generateId(21, NanoId::MODE_DYNAMIC);
+                $old = $this->get($id);
+            } while ($old && $t < 10);
+            if ($t < 10) {
+                return $this->put($id, $doc);
+            }
+        } catch (\Exception $e) {
 
-        }*/
+        }
     }
 
     function put($id, $doc)
@@ -60,6 +60,7 @@ class Base
     {
         $url = $this->_url('/docs?id=' . $id);
         $rs = $this->_exec('GET', $url, 200, null);
+        var_dump($rs);
         if (property_exists($rs, 'Results') && is_array($rs->Results) && count($rs->Results) > 0) {
             return $rs->Results[0];
         }
@@ -86,33 +87,33 @@ class Base
 
     private function _exec($method, $url, $expectedStatusCode, $body)
     {
-        //try {
-        $url_info = parse_url($url);
+        try {
+            $url_info = parse_url($url);
 
-        $cli = new SwooleClient($url_info['host'], $url_info['port']);
-        $cli->set(['timeout' => 1]);
-        $cli->setMethod($method);
-        $cli->setHeaders(['Host' => $url_info['host']]);
-        if ($body != null) {
-            if (!is_string($body)) $body = json_encode($body);
-            $cli->setData($body);
-        }
-        $cli->execute("$url_info[path]?$url_info[query]");
-        $response = $cli->body;
-        $http_code = $cli->getStatusCode();
-        switch ($http_code) {
-            case $expectedStatusCode:
-                return json_decode($response);
-            case 404:
-                return null;
-            default:
-                echo $response;
-                throw new \Exception("$url GOT $http_code - $response");
-        }
-        $cli->close();
-        /*} catch (\Exception $e) {
+            $cli = new SwooleClient($url_info['host'], $url_info['port']);
+            $cli->set(['timeout' => 1]);
+            $cli->setMethod($method);
+            $cli->setHeaders(['Host' => $url_info['host']]);
+            if ($body != null) {
+                if (!is_string($body)) $body = json_encode($body);
+                $cli->setData($body);
+            }
+            $cli->execute("$url_info[path]?$url_info[query]");
+            $response = $cli->body;
+            $http_code = $cli->getStatusCode();
+            switch ($http_code) {
+                case $expectedStatusCode:
+                    return json_decode($response);
+                case 404:
+                    return null;
+                default:
+                    echo $response;
+                    throw new \Exception("$url GOT $http_code - $response");
+            }
+            $cli->close();
+        } catch (\Exception $e) {
 
-        }*/
+        }
     }
 
     private function _url($path)
