@@ -87,6 +87,7 @@ class Base
         $url_info = parse_url($url);
         $host = $url_info['host'];
         $path = $url_info['path'];
+        var_dump($url_info);
 
         $cli = new SwooleClient($host);
         $cli->setMethod($method);
