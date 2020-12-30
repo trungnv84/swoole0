@@ -1,8 +1,8 @@
 <?php
 
-namespace OMG;
+namespace RavenDB;
 
-class RavenDB
+class Base
 {
     private $server;
     private $database;
@@ -51,11 +51,11 @@ class RavenDB
     {
         $curl = curl_init($url);
         try {
-            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
-            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 1);
             curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
             if ($this->pem != null) {
+                curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
+                curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 1);
                 curl_setopt($curl, CURLOPT_SSLCERT, $this->pem);
             }
             if ($body != null) {
