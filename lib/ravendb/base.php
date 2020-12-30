@@ -34,16 +34,16 @@ class Base
     function add($id_prefix, $doc)
     {
         //try {
-            $t = 0;
-            $nano = new NanoId();
-            do {
-                $t++;
-                $id = $id_prefix . $nano->generateId(21, NanoId::MODE_DYNAMIC);
-                $old = $this->get($id);
-            } while ($old && $t < 10);
-            if ($t < 10) {
-                return $this->put($id, $doc);
-            }
+        $t = 0;
+        $nano = new NanoId();
+        do {
+            $t++;
+            $id = $id_prefix . $nano->generateId(21, NanoId::MODE_DYNAMIC);
+            $old = $this->get($id);
+        } while ($old && $t < 10);
+        if ($t < 10) {
+            return $this->put($id, $doc);
+        }
         /*} catch (\Exception $e) {
 
         }*/
@@ -84,31 +84,35 @@ class Base
     private function _exec($method, $url, $expectedStatusCode, $body)
     {
         //try {
-            $url_info = parse_url($url);
-            $host = $url_info['host'];
-            $path = $url_info['path'];
+        $url_info = parse_url($url);
+        $host = $url_info['host'];
+        $path = $url_info['path'];
 
-            $cli = new SwooleClient($host);
-            $cli->setMethod($method);
-            $cli->setHeaders([ 'Host' => $host ]);
-            $cli->set([ 'timeout' => 1 ]);
-            if ($body != null) {
-                $cli->setData(http_build_query($body));
-            }
-            $cli->execute($path);
-            $response = $cli->body;
-            $http_res  = $cli->recv();
-            $http_code = $cli->getStatusCode();
-            switch ($http_code) {
-                case $expectedStatusCode:
-                    return json_decode($response);
-                case 404:
-                    return null;
-                default:
-                    echo $response;
-                    throw new \Exception("$url GOT $http_code - $response - $http_res");
-            }
-            $cli->close();
+        $cli = new SwooleClient($host);
+        $cli->setMethod($method);
+        $cli->setHeaders([
+            'Host' => $host,
+            'Accept' => 'application/json',
+            'Accept-Encoding' => 'gzip',
+        ]);
+        $cli->set(['timeout' => 1]);
+        if ($body != null) {
+            $cli->setData(http_build_query($body));
+        }
+        $cli->execute($path);
+        //$response = $cli->body;
+        $response = $cli->recv();
+        $http_code = $cli->getStatusCode();
+        switch ($http_code) {
+            case $expectedStatusCode:
+                return json_decode($response);
+            case 404:
+                return null;
+            default:
+                echo $response;
+                throw new \Exception("$url GOT $http_code - $response");
+        }
+        $cli->close();
         /*} catch (\Exception $e) {
 
         }*/
