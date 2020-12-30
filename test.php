@@ -1,7 +1,4 @@
 <?php
-
-use Hidehalo\Nanoid\Client as NanoId;
-
 require 'vendor/autoload.php';
 require 'lib/ravendb/session.php';
 

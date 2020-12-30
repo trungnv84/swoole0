@@ -1,4 +1,7 @@
 <?php
+require 'vendor/autoload.php';
+require 'lib/ravendb/session.php';
+
 $http = new Swoole\HTTP\Server("0.0.0.0", 38030, SWOOLE_BASE);
 
 $http->on('start', function ($server) {
@@ -6,6 +9,16 @@ $http->on('start', function ($server) {
 });
 
 $http->on('request', function ($request, $response) {
+    $raven = new \RavenDB\Session('http://192.168.0.102:28080', 'omgfin-exchange');
+
+    $raven->add('product/', [
+        'name' => 'Window 10 ' . rand() ,
+        'price' => '300' . rand(),
+        '@metadata' => [
+            '@collection' => 'Products'
+        ]
+    ]);
+
     $response->header("Content-Type", "text/plain");
     $response->end("Hello World\n");
 });
