@@ -85,14 +85,13 @@ class Base
     {
         //try {
         $url_info = parse_url($url);
-        $host = $url_info['host'];
-        $path = $url_info['path'];
-        var_dump($url_info);
 
-        $cli = new SwooleClient($host);
-        $cli->setMethod($method);
-        $cli->setHeaders(['Host' => $host]);
+        $cli = new SwooleClient($url_info['host'], $url_info['port']);
         $cli->set(['timeout' => 1]);
+        $cli->setMethod($method);
+        $cli->setHeaders(['Host' => $url_info['host']]);
+        var_dump($method);
+        var_dump($body);
         if ($body != null) {
             $cli->setData($body);
             /*switch ($method) {
@@ -104,7 +103,7 @@ class Base
             }*/
         }
         var_dump($cli);
-        $cli->execute($path);
+        $cli->execute("$url_info[path]?$url_info[query]");
         //$response = $cli->body;
         $response = $cli->recv();
         $http_code = $cli->getStatusCode();
