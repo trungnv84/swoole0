@@ -90,23 +90,15 @@ class Base
         $cli->set(['timeout' => 1]);
         $cli->setMethod($method);
         $cli->setHeaders(['Host' => $url_info['host']]);
-        var_dump($method);
-        var_dump($body);
         if ($body != null) {
+            if (!is_string($body)) $body = json_encode($body);
             $cli->setData($body);
-            /*switch ($method) {
-                case 'POST':
-                    $cli->setData($body);
-                    break;
-                default:
-                    $cli->setHeaders(['Host' => $host]);
-            }*/
         }
-        var_dump($cli);
         $cli->execute("$url_info[path]?$url_info[query]");
-        //$response = $cli->body;
-        $response = $cli->recv();
+        $response = $cli->body;
         $http_code = $cli->getStatusCode();
+        var_dump($cli);
+        var_dump($http_code);
         switch ($http_code) {
             case $expectedStatusCode:
                 return json_decode($response);
