@@ -97,7 +97,7 @@ class Base
             }
             $cli->execute($path);
             $response = $cli->body;
-            $http_code = $cli->getStatusCode();
+            echo $http_code = $cli->getStatusCode();
             switch ($http_code) {
                 case $expectedStatusCode:
                     return json_decode($response);
@@ -108,42 +108,8 @@ class Base
                     throw new \Exception("$url GOT $http_code - $response");
             }
             $cli->close();
-            return;
-
-
-
-            $curl = curl_init($url);
-
-            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-            if (count($curl_options_array) > 0) {
-                curl_setopt_array($curl, $curl_options_array);
-            }
-            if ($this->pem != null) {
-                curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
-                curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 1);
-                curl_setopt($curl, CURLOPT_SSLCERT, $this->pem);
-            }
-            if ($body != null) {
-                curl_setopt($curl, CURLOPT_POSTFIELDS, $body);
-            }
-            $response = curl_exec($curl);
-            if (!($error_code = curl_errno($curl))) {
-                switch ($http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE)) {
-                    case $expectedStatusCode:
-                        return json_decode($response);
-                    case 404:
-                        return null;
-                    default:
-                        echo $response;
-                        throw new \Exception("$url GOT $http_code - $response");
-                }
-            } else {
-                echo self::ERROR_CODES[$error_code];
-                throw new \Exception("$url GOT $error_code - $response");
-            }
         } finally {
-            curl_close($curl);
+
         }
     }
 
