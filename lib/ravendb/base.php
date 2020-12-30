@@ -90,15 +90,19 @@ class Base
 
         $cli = new SwooleClient($host);
         $cli->setMethod($method);
-        $cli->setHeaders([
-            'Host' => $host,
-            'Accept' => 'application/json',
-            'Accept-Encoding' => 'gzip',
-        ]);
+        $cli->setHeaders(['Host' => $host]);
         $cli->set(['timeout' => 1]);
         if ($body != null) {
             $cli->setData($body);
+            /*switch ($method) {
+                case 'POST':
+                    $cli->setData($body);
+                    break;
+                default:
+                    $cli->setHeaders(['Host' => $host]);
+            }*/
         }
+        var_dump($cli);
         $cli->execute($path);
         //$response = $cli->body;
         $response = $cli->recv();
