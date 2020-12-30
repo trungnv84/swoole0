@@ -16,6 +16,7 @@ require_once 'lock.php';
 
 use RavenDB\Lock as RavenLock;
 use Hidehalo\Nanoid\Client as NanoId;
+use Swoole\Coroutine\HTTP\Client as SwooleClient;
 
 class Base
 {
@@ -80,10 +81,39 @@ class Base
         return $this->_exec('POST', $url, 200, $body);
     }
 
-    private function _exec($method, $url, $expectedStatusCode, $body, Array $curl_options_array = [])
+    private function _exec($method, $url, $expectedStatusCode, $body)
     {
-        $curl = \curl_init($url);
         try {
+            $url_info = parse_url($url);
+            $host = $url_info['host'];
+            $path = $url_info['path'];
+
+            $cli = new SwooleClient($host);
+            $cli->setMethod($method);
+            $cli->setHeaders([ 'Host' => $host ]);
+            $cli->set([ 'timeout' => 1 ]);
+            if ($body != null) {
+                $cli->setData(http_build_query($body));
+            }
+            $cli->execute($path);
+            $response = $cli->body;
+            $http_code = $cli->getStatusCode();
+            switch ($http_code) {
+                case $expectedStatusCode:
+                    return json_decode($response);
+                case 404:
+                    return null;
+                default:
+                    echo $response;
+                    throw new \Exception("$url GOT $http_code - $response");
+            }
+            $cli->close();
+            return;
+
+
+
+            $curl = curl_init($url);
+
             curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
             if (count($curl_options_array) > 0) {
