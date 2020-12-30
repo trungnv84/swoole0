@@ -82,7 +82,7 @@ class Base
 
     private function _exec($method, $url, $expectedStatusCode, $body, Array $curl_options_array = [])
     {
-        $curl = curl_init($url);
+        $curl = \curl_init($url);
         try {
             curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
