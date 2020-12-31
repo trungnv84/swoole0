@@ -15,5 +15,5 @@ Co\run(function () use ($raven) {
 
     var_dump($raven->get($new->Id));
 
-    var_dump($raven->del($new->Id));
+    var_dump($raven->del("product/0GtlUl1_CbEsYHvm4GOrZ"));
 });
