@@ -20,7 +20,7 @@ $http->on('request', function ($request, $response) {
     ]);
 
     $response->header("Content-Type", "text/plain");
-    $response->end(var_export($newProduct, true) . "\nHello World\n");
+    $response->end(var_export($request, true) . "\nHello World\n");
 });
 
 $http->start();
