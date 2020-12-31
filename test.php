@@ -1,6 +1,6 @@
 <?php
 require 'vendor/autoload.php';
-require 'lib/ravendb/session.php';
+require 'lib/raven/session.php';
 
 $raven = new \RavenDB\Session('http://192.168.0.102:28080', 'omgfin-exchange');
 

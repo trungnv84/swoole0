@@ -1,6 +1,6 @@
 <?php
 require 'vendor/autoload.php';
-require 'lib/ravendb/session.php';
+require 'lib/raven/session.php';
 
 $http = new Swoole\HTTP\Server("0.0.0.0", 38030, SWOOLE_PROCESS);
 
