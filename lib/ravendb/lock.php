@@ -34,7 +34,7 @@ class Lock
         return self::$locks[$key];
     }
 
-    public static function lock($key, ?float $ttl = 300.0)
+    public static function lock(string $key, ?float $ttl = 300.0)
     {
         $key = md5($key);
         $lock =& self::_lock($key, $ttl);
@@ -43,17 +43,17 @@ class Lock
         return $acquired;
     }
 
-    public static function isAcquired($key)
+    public static function isAcquired(string $key)
     {
         return self::_lock(md5($key))->acquire();
     }
 
-    public static function isLocked($key)
+    public static function isLocked(string $key)
     {
         return !self::_lock(md5($key))->acquire();
     }
 
-    public static function release($key)
+    public static function release(string $key)
     {
         self::_lock(md5($key))->release();
     }

@@ -20,18 +20,20 @@ use Swoole\Coroutine\HTTP\Client as SwooleClient;
 
 class Base
 {
+    const LOCK_KEY = 'RAVEN_';
+
     private $server;
     private $database;
     private $pem;
 
-    public function __construct($server, $database, $pem = null)
+    public function __construct(string $server, string $database, ?string $pem = null)
     {
         $this->server = $server;
         $this->database = $database;
         $this->pem = $pem;
     }
 
-    function add($id_prefix, $doc)
+    public function add(string $id_prefix, array $doc)
     {
         try {
             $t = 0;
@@ -49,14 +51,28 @@ class Base
         }
     }
 
-    function put($id, $doc)
+    public function set(string $id, array $data)
+    {
+        if (RavenLock::lock($lock_key = self::LOCK_KEY . $id)) {
+            $old = $this->get($id);
+            if ($old) {
+                $new = array_merge((array)$old, $data);
+                $rs = $this->put($id, $new);
+                RavenLock::release($lock_key);
+                return $rs;
+            }
+            RavenLock::release($lock_key);
+        }
+    }
+
+    public function put(string $id, array $doc)
     {
         $url = $this->_url('/docs?id=' . $id);
         $body = json_encode($doc);
         return $this->_exec('PUT', $url, 201, $body);
     }
 
-    function get($id)
+    public function get(string $id)
     {
         $url = $this->_url('/docs?id=' . $id);
         $rs = $this->_exec('GET', $url, 200, null);
@@ -65,19 +81,23 @@ class Base
         }
     }
 
-    function del($id)
+    public function del(string $id)
     {
-        $url = $this->_url('/docs?id=' . $id);
-        $this->_exec('DELETE', $url, 204, null);
+        if (RavenLock::lock($lock_key = self::LOCK_KEY . $id)) {
+            $url = $this->_url('/docs?id=' . $id);
+            $rs = $this->_exec('DELETE', $url, 204, null);
+            RavenLock::release($lock_key);
+            return $rs;
+        }
     }
 
-    function query($query, $args = null)
+    public function query(string $query, $args = null)
     {
         $r = $this->raw_query($query, $args);
         return $r->Results;
     }
 
-    function raw_query($query, $args = null)
+    public function raw_query(string $query, $args = null)
     {
         $url = $this->_url('/queries');
         $body = json_encode(array('Query' => $query, 'QueryParameters' => $args));

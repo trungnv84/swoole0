@@ -24,4 +24,14 @@ class Session extends RavenBase
         return $this;
     }
 
+    public function saveChanges()
+    {
+
+    }
+
+    public function Clear()
+    {
+
+    }
+
 }
