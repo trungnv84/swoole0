@@ -38,6 +38,9 @@ $http->on('request', function ($request, $response) {
                 $response->header("Content-Type", "text/plain");
                 $response->end(var_export($newProduct, true) . "\nHello World\n");
         }
+    } else {
+        $response->header("Content-Type", "text/plain");
+        $response->end("Hello World\n");
     }
 });
 
