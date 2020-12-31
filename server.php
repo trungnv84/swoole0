@@ -32,6 +32,7 @@ Co\run(function() {
 
     //===
 
+    return;
     go(function() {
         $http = new Swoole\HTTP\Server("0.0.0.0", 38031, SWOOLE_PROCESS);
 
