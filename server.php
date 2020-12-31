@@ -10,8 +10,8 @@ $http->on('start', function ($server) {
 
 $http->on('request', function ($request, $response) {
     $newProduct = null;
-    if (@$request['get']['raven']) {
-        switch ($request['get']['raven']) {
+    if (@$request->get['raven']) {
+        switch ($request->get['raven']) {
             case '1':
                 Co\run(function () use ($request, $response) {
                     $raven = new \RavenDB\Session('http://192.168.0.102:28080', 'omgfin-exchange');
