@@ -85,7 +85,8 @@ class Base
     {
         if (RavenLock::lock($lock_key = self::LOCK_KEY . $id)) {
             $url = $this->_url('/docs?id=' . $id);
-            $rs = $this->_exec('DELETE', $url, 204, null);
+            $this->_exec('DELETE', $url, 204, null);
+            $rs = $this->get($id);
             RavenLock::release($lock_key);
             return $rs;
         }
