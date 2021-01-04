@@ -1,9 +1,9 @@
 <?php
-use EasySwoole\FastCache\Cache;
-use EasySwoole\FastCache\Job;
-
 require 'vendor/autoload.php';
 require 'lib/raven/session.php';
+
+use EasySwoole\FastCache\Cache;
+use EasySwoole\FastCache\Job;
 
 $http = new Swoole\HTTP\Server("0.0.0.0", 38030, SWOOLE_PROCESS);
 
