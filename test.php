@@ -5,11 +5,14 @@ require 'lib/raven/session.php';
 use EasySwoole\FastCache\Cache;
 use EasySwoole\FastCache\Job;
 
-$job = new Job();
-$job->setData("siam"); // any type of data
+/*$job = new Job();
+$job->setData("siam");
 $job->setQueue("siam_queue");
 $jobId = Cache::getInstance()->putJob($job);
-var_dump($jobId);
+var_dump($jobId);*/
+
+$job = Cache::getInstance()->getJob('siam_queue');
+var_dump($job);
 
 
 exit(0);
