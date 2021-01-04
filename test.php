@@ -5,16 +5,17 @@ require 'lib/raven/session.php';
 use EasySwoole\FastCache\Cache;
 use EasySwoole\FastCache\Job;
 
-/*protected static $_default_config = array(
-    'socket_type' => 'tcp',
-    'host' => '127.0.0.1',
-    'password' => NULL,
-    'port' => 6379,
-    'timeout' => 0
-);*/
-
 go(function () {
-// get the task that failed to execute can be resent
+    $redis = new \EasySwoole\Redis\Redis(new \EasySwoole\Redis\Config\RedisConfig([
+        'host' => '127.0.0.1',
+        'port' => '6379',
+        'auth' => 'easyswoole',
+        'serialize' => \EasySwoole\Redis\Config\RedisConfig::SERIALIZE_NONE
+    ]));
+    var_dump($redis->set('a',1));
+    var_dump($redis->get('a'));
+    
+    // get the task that failed to execute can be resent
     $job = new Job();
     $job->setData("siam");
     $job->setQueue("siam_queue");
