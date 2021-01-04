@@ -10,12 +10,15 @@ use EasySwoole\FastCache\Cache;
 use EasySwoole\FastCache\Job;
 
 $config = new RedisConfig([
-    'host'=>'127.0.0.1'
+    'host' => '127.0.0.1',
+    'port' => '6379',
+    'auth' => '',
+    'serialize' => RedisConfig::SERIALIZE_NONE
 ]);
 $redis = new RedisPool($config);
 $driver = new Redis($redis);
-$queue = new Queue($redis);
-$cache = new Cache($redis);
+$queue = new Queue($driver);
+$cache = new Cache($driver);
 
     var_dump($driver->get('a'));
 
