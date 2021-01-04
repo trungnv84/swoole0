@@ -6,6 +6,9 @@ use EasySwoole\Redis\Config\RedisConfig;
 use EasySwoole\RedisPool\RedisPool;
 use EasySwoole\Queue\Driver\Redis;
 
+use EasySwoole\Queue\Queue;
+//use EasySwoole\Queue\Job;
+
 use EasySwoole\FastCache\Cache;
 use EasySwoole\FastCache\Job;
 
