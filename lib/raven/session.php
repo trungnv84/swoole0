@@ -7,6 +7,7 @@ require_once 'lock.php';
 
 use RavenDB\Lock as RavenLock;
 use RavenDB\Base as RavenBase;
+use Hidehalo\Nanoid\Client as NanoId;
 
 class Session extends RavenBase
 {

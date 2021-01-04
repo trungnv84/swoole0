@@ -2,6 +2,8 @@
 require 'vendor/autoload.php';
 require 'lib/raven/session.php';
 
+use Hidehalo\Nanoid\Client as NanoId;
+
 if (true) {
 
     $raven = new \RavenDB\Session('http://192.168.0.102:28080', 'omgfin-exchange');
