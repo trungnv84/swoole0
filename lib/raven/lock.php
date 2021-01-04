@@ -9,8 +9,7 @@
 
 namespace RavenDB;
 
-//use Symfony\Component\Lock\Store\FlockStore;
-use Symfony\Component\Lock\Store\RedisStore;
+use Symfony\Component\Lock\Store\FlockStore;
 use Symfony\Component\Lock\LockFactory;
 
 class Lock
@@ -21,10 +20,7 @@ class Lock
     private static function &_init()
     {
         if (!isset(self::$factory)) {
-            //$store = new FlockStore(sys_get_temp_dir());
-            $redis = new \Redis();
-            $redis->connect('localhost');
-            $store = new RedisStore($redis);
+            $store = new FlockStore(sys_get_temp_dir());
             self::$factory = new LockFactory($store);
         }
         return self::$factory;
