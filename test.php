@@ -14,8 +14,8 @@ $config = new RedisConfig([
 ]);
 $redis = new RedisPool($config);
 $driver = new Redis($redis);
-$queue = new Queue($driver);
-$cache = new Cache($driver);
+$queue = new Queue($redis);
+$cache = new Cache($redis);
 
     var_dump($driver->get('a'));
 
