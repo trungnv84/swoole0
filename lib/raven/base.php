@@ -12,11 +12,16 @@
 
 namespace RavenDB;
 
+require_once 'lock.php';
+
+use RavenDB\Lock as RavenLock;
 use Hidehalo\Nanoid\Client as NanoId;
 use Swoole\Coroutine\HTTP\Client as SwooleClient;
 
 class Base
 {
+    const LOCK_KEY = 'RAVEN_';
+
     private $server;
     private $database;
     private $pem;
@@ -26,11 +31,6 @@ class Base
         $this->server = $server;
         $this->database = $database;
         $this->pem = $pem;
-    }
-
-    public function instance()
-    {
-
     }
 
     public function add(string $id_prefix, array $doc)
@@ -53,11 +53,15 @@ class Base
 
     public function set(string $id, array $data)
     {
-        $old = $this->get($id);
-        if ($old) {
-            $new = array_merge((array)$old, $data);
-            $rs = $this->put($id, $new);
-            return $rs;
+        if (RavenLock::lock($lock_key = self::LOCK_KEY . $id)) {
+            $old = $this->get($id);
+            if ($old) {
+                $new = array_merge((array)$old, $data);
+                $rs = $this->put($id, $new);
+                RavenLock::release($lock_key);
+                return $rs;
+            }
+            RavenLock::release($lock_key);
         }
     }
 
@@ -79,10 +83,13 @@ class Base
 
     public function del(string $id)
     {
-        $url = $this->_url('/docs?id=' . $id);
-        $this->_exec('DELETE', $url, 204, null);
-        $rs = $this->get($id);
-        return $rs;
+        if (RavenLock::lock($lock_key = self::LOCK_KEY . $id)) {
+            $url = $this->_url('/docs?id=' . $id);
+            $this->_exec('DELETE', $url, 204, null);
+            $rs = $this->get($id);
+            RavenLock::release($lock_key);
+            return $rs;
+        }
     }
 
     public function query(string $query, $args = null)

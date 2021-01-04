@@ -4,6 +4,7 @@ namespace RavenDB;
 
 require_once 'base.php';
 
+use RavenDB\Lock as RavenLock;
 use RavenDB\Base as RavenBase;
 
 class Session extends RavenBase
@@ -24,7 +25,6 @@ class Session extends RavenBase
     public function &openSession()
     {
         // check va khoi chay nodejs session ravendb
-
         // khoi tao thanh cong
         $this->status = true;
         $this->queries = [];
@@ -56,6 +56,7 @@ class Session extends RavenBase
             } while ($old && $t++ < 10);
         }
         if ($t < 10) {
+            //RavenLock::lock(self::LOCK_KEY . $id);
             $this->queries[] = [
                 'type' => 'store',
                 'entity' => $entity,
