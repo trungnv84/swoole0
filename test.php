@@ -16,9 +16,9 @@ $config = new RedisConfig([
     'serialize' => RedisConfig::SERIALIZE_NONE
 ]);
 $redis = new RedisPool($config);
-$driver = new Redis($redis);
-$queue = new Queue($driver);
-$cache = new Cache($driver);
+//$driver = new Redis($redis);
+$queue = new Queue($redis);
+$cache = new Cache($redis);
 
     var_dump($driver->get('a'));
 
