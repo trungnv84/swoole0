@@ -26,7 +26,7 @@ go(function () {
         $i = 0;
         while (1) {
             $job = new \EasySwoole\Queue\Job();
-            $data = "1:" . ($i++);
+            $data = ++$i;
             $job->setJobData($data);
             $id = $queue->producer()->push($job);
             echo('create1 data:' . $data . PHP_EOL);
