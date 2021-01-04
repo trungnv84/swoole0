@@ -5,7 +5,7 @@ require 'lib/raven/session.php';
 use EasySwoole\FastCache\Cache;
 use EasySwoole\FastCache\Job;
 
-Cache::getInstance()->setTempDir(__DIR__ . '/cache/')->attachToServer(ServerManager::getInstance()->getSwooleServer());
+Cache::getInstance()->setTempDir(__DIR__ . '/cache/');
 
 // get the task that failed to execute can be resent
 $job = new Job();
