@@ -14,7 +14,7 @@ go(function () {
     ]));
     var_dump($redis->set('a',1));
     var_dump($redis->get('a'));
-    
+
     // get the task that failed to execute can be resent
     $job = new Job();
     $job->setData("siam");
