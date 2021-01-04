@@ -3,7 +3,7 @@ require 'vendor/autoload.php';
 require 'lib/raven/session.php';
 
 use EasySwoole\Redis\Config\RedisConfig;
-use EasySwoole\RedisPool\RedisPool;
+use EasySwoole\RedisPool\Pool;
 use EasySwoole\Queue\Driver\Redis;
 use EasySwoole\Queue\Queue;
 //use EasySwoole\Queue\Job;
@@ -17,7 +17,7 @@ $config = new RedisConfig([
     'auth' => '',
     'serialize' => RedisConfig::SERIALIZE_NONE
 ]);
-$redis = new RedisPool($config);
+$redis = new Pool($config);
 
 $driver = new Redis($redis);
 $queue = new Queue($driver);
