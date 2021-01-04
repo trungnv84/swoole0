@@ -1,4 +1,7 @@
 <?php
+use EasySwoole\FastCache\Cache;
+use EasySwoole\FastCache\Job;
+
 require 'vendor/autoload.php';
 require 'lib/raven/session.php';
 
@@ -10,7 +13,9 @@ $http->on('start', function ($server) {
 
 $http->on('request', function ($request, $response) {
     $newProduct = null;
-    if (@$request->get['raven']) {
+    if (@$request->get['a']) {
+
+    } elseif (@$request->get['raven']) {
         $raven = new \RavenDB\Session('http://192.168.0.102:28080', 'omgfin-exchange');
         $newProduct = $raven->add('product/', [
             'name' => 'Window 10 ' . rand(),

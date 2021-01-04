@@ -1,6 +1,19 @@
 <?php
+use EasySwoole\FastCache\Cache;
+use EasySwoole\FastCache\Job;
+
 require 'vendor/autoload.php';
 require 'lib/raven/session.php';
+
+
+$job = new Job();
+$job->setData("siam"); // any type of data
+$job->setQueue("siam_queue");
+$jobId = Cache::getInstance()->putJob($job);
+var_dump($jobId);
+
+
+exit(0);
 
 $raven = new \RavenDB\Session('http://192.168.0.102:28080', 'omgfin-exchange');
 
