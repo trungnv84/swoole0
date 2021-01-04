@@ -1,10 +1,9 @@
 <?php
-use EasySwoole\FastCache\Cache;
-use EasySwoole\FastCache\Job;
-
 require 'vendor/autoload.php';
 require 'lib/raven/session.php';
 
+use EasySwoole\FastCache\Cache;
+use EasySwoole\FastCache\Job;
 
 $job = new Job();
 $job->setData("siam"); // any type of data
