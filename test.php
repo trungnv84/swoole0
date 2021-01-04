@@ -4,7 +4,21 @@ require 'lib/raven/session.php';
 
 use Hidehalo\Nanoid\Client as NanoId;
 
-if (true) {
+$pool = new RedisPool();
+go(function () use ($pool) {
+    $redis = $pool->get();
+    $redis->set("awesome-{1}-1", 'swoole1');
+    $redis->set("awesome-{1}-2", 'swoole2');
+    $redis->set("awesome-{1}-3", 'swoole3');
+    $redis->set("awesome-{1}-4", 'swoole4');
+    echo $redis->get("awesome-{1}-1");
+    echo $redis->get("awesome-{1}-2");
+    echo $redis->get("awesome-{1}-3");
+    echo $redis->get("awesome-{1}-4");
+    $pool->put($redis);
+});
+
+if (false) {
 
     $raven = new \RavenDB\Session('http://192.168.0.102:28080', 'omgfin-exchange');
 
