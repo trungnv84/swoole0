@@ -5,6 +5,7 @@ require 'lib/raven/session.php';
 use EasySwoole\FastCache\Cache;
 use EasySwoole\FastCache\Job;
 
+// get the task that failed to execute can be resent
 $job = new Job();
 $job->setData("siam");
 $job->setQueue("siam_queue");
@@ -13,6 +14,25 @@ var_dump($jobId);
 
 $job = Cache::getInstance()->getJob('siam_queue');
 var_dump($job);
+
+if ($job === null) {
+    echo "No task\n";
+} else {
+    // Execution of business logic
+    $doRes = false;
+    if (!$doRes) {
+        // Business logic failed and needs to be resent
+        // If the delay queue needs to be resent immediately, you need to clear the delay attribute here.
+        // $job->setDelay(0);
+        // If the normal queue needs to delay retransmission, set the delay attribute
+        // $job->setDelay(5);
+        $res = Cache::getInstance()->releaseJob($job);
+        var_dump($res);
+    } else {
+        // To delete or resend after execution, otherwise the timeout will be automatically resent.
+        Cache::getInstance()->deleteJob($job);
+    }
+}
 
 
 exit(0);
