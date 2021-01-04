@@ -3,6 +3,7 @@
 namespace RavenDB;
 
 require_once 'base.php';
+require_once 'lock.php';
 
 use RavenDB\Lock as RavenLock;
 use RavenDB\Base as RavenBase;
