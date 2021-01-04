@@ -3,7 +3,7 @@ require 'vendor/autoload.php';
 require 'lib/raven/session.php';
 
 use EasySwoole\Redis\Config\RedisConfig;
-use EasySwoole\RedisPool\RedisPool;
+use EasySwoole\RedisPool\Pool;
 use EasySwoole\Queue\Driver\Redis;
 use EasySwoole\Queue\Queue;
 //use EasySwoole\Queue\Job;
@@ -17,13 +17,13 @@ $config = new RedisConfig([
     'auth' => '',
     'serialize' => RedisConfig::SERIALIZE_NONE
 ]);
-$redis = new RedisPool($config);
+$pool = new Pool($config);
 
-$driver = new Redis($redis);
-$queue = new Queue($driver);
-$cache = new Cache($driver);
+$redis = new Redis($pool);
+$queue = new Queue($redis);
+$cache = new Cache($redis);
 
-    var_dump($driver->get('a'));
+    var_dump($redis->get('a'));
 
     // get the task that failed to execute can be resent
     $job = new Job();
