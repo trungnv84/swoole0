@@ -36,12 +36,13 @@ go(function (){
     // 消费者
     go(function ()use($queue){
         $queue->consumer()->listen(function (\EasySwoole\Queue\Job $job){
+            \co::sleep(rand(2, 10));
             echo "job1 data:".$job->getJobData().PHP_EOL;
         });
     });
 
 
-    $driver = new \EasySwoole\Queue\Driver\Redis($redisPool,'queue2');
+    /*$driver = new \EasySwoole\Queue\Driver\Redis($redisPool,'queue2');
     $queue2 = new EasySwoole\Queue\Queue($driver);
     go(function ()use($queue2){
         while (1){
@@ -57,7 +58,7 @@ go(function (){
         $queue2->consumer()->listen(function (\EasySwoole\Queue\Job $job){
             echo "job2 data:".$job->getJobData().PHP_EOL;
         });
-    });
+    });*/
 });
 
 
