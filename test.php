@@ -32,6 +32,7 @@ go(function () use ($queue) {
 go(function () use ($queue) {
     $queue->consumer()->listen(function (Job $job) {
         var_dump($job);
+        \co::sleep(5);
     });
 });
 
