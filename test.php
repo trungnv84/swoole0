@@ -5,7 +5,6 @@ require 'lib/raven/session.php';
 use EasySwoole\Redis\Config\RedisConfig;
 use EasySwoole\RedisPool\RedisPool;
 use EasySwoole\Queue\Driver\Redis;
-
 use EasySwoole\Queue\Queue;
 //use EasySwoole\Queue\Job;
 
@@ -19,9 +18,10 @@ $config = new RedisConfig([
     'serialize' => RedisConfig::SERIALIZE_NONE
 ]);
 $redis = new RedisPool($config);
-//$driver = new Redis($redis);
-$queue = new Queue($redis);
-$cache = new Cache($redis);
+
+$driver = new Redis($redis);
+$queue = new Queue($driver);
+$cache = new Cache($driver);
 
     var_dump($driver->get('a'));
 
