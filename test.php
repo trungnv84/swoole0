@@ -6,10 +6,7 @@ use EasySwoole\Redis\Config\RedisConfig;
 use EasySwoole\RedisPool\Pool;
 use EasySwoole\Queue\Driver\Redis;
 use EasySwoole\Queue\Queue;
-//use EasySwoole\Queue\Job;
-
-use EasySwoole\FastCache\Cache;
-use EasySwoole\FastCache\Job;
+use EasySwoole\Queue\Job;
 
 $config = new RedisConfig([
     'host' => '127.0.0.1',
@@ -21,39 +18,22 @@ $redis = new Pool($config);
 
 $driver = new Redis($redis);
 $queue = new Queue($driver);
-$cache = new Cache($driver);
 
-    //var_dump($driver->get('a'));
-
-    // get the task that failed to execute can be resent
-    $job = new Job();
-    $job->setData("siam");
-    $job->setQueue("siam_queue");
-    $jobId = $cache->putJob($job);
-    var_dump($jobId);
-
-    $job = $cache->getJob('siam_queue');
-    var_dump($job);
-
-    if ($job === null) {
-        echo "No task\n";
-    } else {
-        // Execution of business logic
-        $doRes = false;
-        if (!$doRes) {
-            // Business logic failed and needs to be resent
-            // If the delay queue needs to be resent immediately, you need to clear the delay attribute here.
-            // $job->setDelay(0);
-            // If the normal queue needs to delay retransmission, set the delay attribute
-            // $job->setDelay(5);
-            $res = $cache->releaseJob($job);
-            var_dump($res);
-        } else {
-            // To delete or resend after execution, otherwise the timeout will be automatically resent.
-            $cache->deleteJob($job);
-        }
+go(function () use ($queue) {
+    while (1) {
+        $job = new Job();
+        $job->setJobData(time());
+        $id = $queue->producer()->push($job);
+        var_dump('job create for Id :' . $id);
+        \co::sleep(3);
     }
+});
 
+go(function () use ($queue) {
+    $queue->consumer()->listen(function (Job $job) {
+        var_dump($job->toArray());
+    });
+});
 
 
 if (false) {
