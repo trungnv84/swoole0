@@ -8,36 +8,37 @@ use EasySwoole\Queue\Driver\Redis;
 use EasySwoole\Queue\Queue;
 use EasySwoole\Queue\Job;
 
-go(function (){
+go(function () {
     //queue组件会自动强制进行序列化
     \EasySwoole\RedisPool\RedisPool::getInstance()->register(new \EasySwoole\Redis\Config\RedisConfig(
         [
-            'host'      => '127.0.0.1',
-            'port'      => '6379',
-            'auth'      => '',
+            'host' => '127.0.0.1',
+            'port' => '6379',
+            'auth' => '',
         ]
     ), 'queue');
     $redisPool = \EasySwoole\RedisPool\RedisPool::getInstance()->getPool('queue');
-    $driver = new \EasySwoole\Queue\Driver\Redis($redisPool,'queue');
+    $driver = new \EasySwoole\Queue\Driver\Redis($redisPool, 'queue');
     $queue = new EasySwoole\Queue\Queue($driver);
 
     // 生产者
-    go(function ()use($queue){
-        while (1){
+    go(function () use ($queue) {
+        $i = 0;
+        while (1) {
             $job = new \EasySwoole\Queue\Job();
-            $data = "1:".rand(1,99);
+            $data = "1:" . ($i++);
             $job->setJobData($data);
             $id = $queue->producer()->push($job);
-            echo ('create1 data :'.$data.PHP_EOL);
+            echo('create1 data:' . $data . PHP_EOL);
             \co::sleep(3);
         }
     });
 
     // 消费者
-    go(function ()use($queue){
-        $queue->consumer()->listen(function (\EasySwoole\Queue\Job $job){
+    go(function () use ($queue) {
+        $queue->consumer()->listen(function (\EasySwoole\Queue\Job $job) {
             \co::sleep(rand(2, 10));
-            echo "job1 data:".$job->getJobData().PHP_EOL;
+            echo "job1 data:" . $job->getJobData() . PHP_EOL;
         });
     });
 
