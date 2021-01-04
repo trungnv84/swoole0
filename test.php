@@ -29,12 +29,12 @@ go(function () use ($queue) {
     }
 });
 
-go(function () use ($queue) {
+//go(function () use ($queue) {
     $queue->consumer()->listen(function (Job $job) {
         \co::sleep(rand(2, 10));
         var_dump($job);
     });
-});
+//});
 
 
 if (false) {
