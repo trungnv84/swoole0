@@ -23,7 +23,7 @@ $driver = new Redis($redis);
 $queue = new Queue($driver);
 $cache = new Cache($driver);
 
-    var_dump($driver->get('a'));
+    //var_dump($driver->get('a'));
 
     // get the task that failed to execute can be resent
     $job = new Job();
