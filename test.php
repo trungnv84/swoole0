@@ -6,6 +6,7 @@ use Hidehalo\Nanoid\Client as NanoId;
 
 use Swoole\Database\RedisPool;
 
+
 $pool = new RedisPool();
 go(function () use ($pool) {
     $redis = $pool->get();
