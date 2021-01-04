@@ -2,27 +2,31 @@
 require 'vendor/autoload.php';
 require 'lib/raven/session.php';
 
+use EasySwoole\Redis\Config\RedisConfig;
+use EasySwoole\RedisPool\RedisPool;
+use EasySwoole\Queue\Driver\Redis;
+
 use EasySwoole\FastCache\Cache;
 use EasySwoole\FastCache\Job;
 
-go(function () {
-    $redis = new \EasySwoole\Redis\Redis(new \EasySwoole\Redis\Config\RedisConfig([
-        'host' => '127.0.0.1',
-        'port' => '6379',
-        'auth' => '',
-        'serialize' => \EasySwoole\Redis\Config\RedisConfig::SERIALIZE_NONE
-    ]));
-    var_dump($redis->set('a',1));
-    var_dump($redis->get('a'));
+$config = new RedisConfig([
+    'host'=>'127.0.0.1'
+]);
+$redis = new RedisPool($config);
+$driver = new Redis($redis);
+$queue = new Queue($driver);
+$cache = new Cache($driver);
+
+    var_dump($driver->get('a'));
 
     // get the task that failed to execute can be resent
     $job = new Job();
     $job->setData("siam");
     $job->setQueue("siam_queue");
-    $jobId = Cache::getInstance()->putJob($job);
+    $jobId = $cache->putJob($job);
     var_dump($jobId);
 
-    $job = Cache::getInstance()->getJob('siam_queue');
+    $job = $cache->getJob('siam_queue');
     var_dump($job);
 
     if ($job === null) {
@@ -36,14 +40,14 @@ go(function () {
             // $job->setDelay(0);
             // If the normal queue needs to delay retransmission, set the delay attribute
             // $job->setDelay(5);
-            $res = Cache::getInstance()->releaseJob($job);
+            $res = $cache->releaseJob($job);
             var_dump($res);
         } else {
             // To delete or resend after execution, otherwise the timeout will be automatically resent.
-            Cache::getInstance()->deleteJob($job);
+            $cache->deleteJob($job);
         }
     }
-});
+
 
 
 if (false) {
